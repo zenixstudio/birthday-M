@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MUSKAN – The Birthday</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--g:#e8b84a;--r:#b3122f}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:#000;color:#fff;overflow:hidden;text-align:center;font-family:"Cinzel",Georgia,serif;-webkit-tap-highlight-color:transparent}
+canvas{position:fixed;inset:0;z-index:0}
+.bar{position:fixed;left:0;right:0;height:11vh;background:#000;z-index:4;transition:height 1.5s}
+.bar.t{top:0}.bar.b{bottom:0}
+.vig{position:fixed;inset:0;z-index:3;pointer-events:none;background:radial-gradient(ellipse at center,transparent 25%,#000 105%)}
+.st{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px}
+.line{font-size:clamp(22px,6.5vw,38px);letter-spacing:3px;opacity:0;transform:scale(1.08);transition:opacity 1.2s,transform 4s;text-shadow:0 0 22px #000,0 0 10px #000}
+.line.on{opacity:1;transform:scale(1)}
+.small{font-size:13px;letter-spacing:7px;color:var(--g);opacity:0;transition:opacity 1.5s}
+.small.on{opacity:.9}
+.hb{font-size:clamp(16px,5vw,26px);letter-spacing:12px;color:#d8c9a3;opacity:0;transition:opacity 1.5s .3s}
+.title{font-family:"Cinzel Decorative",Georgia,serif;font-weight:900;font-size:clamp(52px,19vw,120px);margin:0;letter-spacing:2px;opacity:0;transform:scale(1.4);filter:blur(14px);background:linear-gradient(180deg,#fff3c4 0%,var(--g) 45%,#7a4f10 100%);-webkit-background-clip:text;background-clip:text;color:transparent;transition:all 2.2s cubic-bezier(.2,.8,.2,1);text-shadow:none}
+.title.on{opacity:1;transform:scale(1);filter:drop-shadow(0 0 22px rgba(232,184,74,.55))}
+.hb.on{opacity:1}
+.btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;opacity:0;transition:opacity 1.5s;margin-top:10px;pointer-events:none}
+.btns.on{opacity:1;pointer-events:auto}
+button{font:700 14px "Cinzel",serif;letter-spacing:3px;color:var(--g);background:rgba(0,0,0,.6);border:1px solid var(--g);padding:12px 20px;cursor:pointer;box-shadow:0 0 14px rgba(232,184,74,.25)}
+button:active{background:var(--g);color:#000}
+.msg{min-height:24px;max-width:320px;font-size:15px;letter-spacing:1px;color:#e7d9b8;transition:opacity .4s}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="vig"></div>
+<div class="bar t" id="bt"></div><div class="bar b" id="bb"></div>
+<div class="st" id="st">
+  <div class="small" id="sm">A BIRTHDAY ORIGINAL</div>
+  <div class="line" id="ln"></div>
+  <div class="hb" id="hb">HAPPY BIRTHDAY</div>
+  <h1 class="title" id="ti">MUSKAN</h1>
+  <div class="msg" id="msg"></div>
+  <div class="btns" id="bt2"><button id="w">✦ WISH ✦</button><button id="rp">↻ REPLAY</button></div>
+</div>
+<script>
+const cv=document.getElementById('c'),x=cv.getContext('2d');
+let W,H,cols,drops,F=[],mode='rain',tint='179,18,47';
+const CH='MUSKAN♥🎂✦01あアカサタナ'.split('');
+function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;cols=Math.ceil(W/20);drops=Array.from({length:cols},()=>Math.random()*-50)}
+rs();addEventListener('resize',rs);
+function draw(){
+  x.fillStyle='rgba(0,0,0,.09)';x.fillRect(0,0,W,H);
+  x.font='16px monospace';
+  for(let i=0;i<cols;i++){
+    const ch=CH[Math.random()*CH.length|0],px=i*20,py=drops[i]*20;
+    x.fillStyle='rgba(255,230,230,.9)';x.fillText(ch,px,py);
+    x.fillStyle='rgba('+tint+',.75)';x.fillText(CH[Math.random()*CH.length|0],px,py-20);
+    if(py>H&&Math.random()>.975)drops[i]=0;drops[i]+=mode==='rain'?.55:.3;
+  }
+  F=F.filter(p=>p.l>0);
+  F.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.05;p.vx*=.985;p.l--;x.globalAlpha=p.l/100;x.fillStyle=p.c;x.shadowColor=p.c;x.shadowBlur=12;x.fillRect(p.x,p.y,3,3)});
+  x.globalAlpha=1;x.shadowBlur=0;requestAnimationFrame(draw)}
+draw();
+function boom(px,py,n=80){const c=['#e8b84a','#fff3c4','#b3122f','#ff6a3d'][Math.random()*4|0];for(let i=0;i<n;i++){const a=Math.PI*2*i/n,v=Math.random()*5+1;F.push({x:px,y:py,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:100,c})}}
+const $=id=>document.getElementById(id),wait=ms=>new Promise(r=>setTimeout(r,ms));
+async function say(t,ms=2600){const l=$('ln');l.textContent=t;l.classList.remove('on');void l.offsetWidth;l.classList.add('on');await wait(ms);l.classList.remove('on');await wait(900)}
+async function play(){
+  ['sm','hb','ti','bt2'].forEach(i=>$(i).classList.remove('on'));
+  $('msg').textContent='';mode='rain';tint='179,18,47';
+  $('bt').style.height=$('bb').style.height='11vh';
+  await wait(600);$('sm').classList.add('on');await wait(2200);$('sm').classList.remove('on');await wait(1300);
+  await say('Har kahani mein ek khaas kirdaar hota hai…');
+  await say('Jiski hansi se andhera bhi roshan ho jata hai…');
+  await say('Jo dost nahi, family ban jati hai…');
+  await say('Aur aaj…  uska din hai.',2400);
+  mode='slow';tint='232,184,74';
+  $('bt').style.height=$('bb').style.height='5vh';
+  $('hb').classList.add('on');await wait(900);$('ti').classList.add('on');
+  for(let i=0;i<7;i++)setTimeout(()=>boom(Math.random()*W,H*.15+Math.random()*H*.5),i*300+800);
+  await wait(3000);$('bt2').classList.add('on');$('msg').textContent='Screen par kahin bhi tap karo ✦'}
+const wishes=['Teri har wish poori ho ✨','Tu legend hai, Muskan 👑','Aaj ka din sirf tera hai 🎂','Hamesha aise hi chamakti reh 🌟','Party pending hai teri! 😎'];let wi=0;
+$('w').onclick=()=>{$('msg').textContent=wishes[wi++%wishes.length];for(let i=0;i<5;i++)setTimeout(()=>boom(Math.random()*W,H*.1+Math.random()*H*.6,90),i*130)};
+$('rp').onclick=play;
+document.addEventListener('pointerdown',e=>{if(e.target.tagName!=='BUTTON'&&mode==='slow')boom(e.clientX,e.clientY,70)});
+play();
+</script>
+</body>
+</html>
